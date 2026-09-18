@@ -1,0 +1,11 @@
+name: massive-pricing-request-skill
+description: |
+  Canvass many providers/professionals for a CLOSED, specific price quote on any product,
+  project, or service — software, trades, moving, tutoring, anything — for market research
+  or personal procurement. Individual sends only (no BCC), default sender
+  samihalawaster@gmail.com via Gmail SMTP, default city Madrid, replies parsed into a
+  sorted price comparison via IMAP.
+version: 1.0.0
+license: MIT
+author: samihalawa
+homepage: https://github.com/samihalawa/massive-pricing-request-skill
