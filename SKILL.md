@@ -15,6 +15,14 @@ Get real, comparable, CLOSED price numbers from many providers at once, for any 
 
 Reference implementation this skill generalizes: a 104-company Spanish software-dev outreach for a "Farm Management Software" closed-quote request, sent individually via Gmail SMTP, replies later pulled and parsed via IMAP into a price comparison (quotes ranged €40K–€1.5M across responders). Same mechanics apply to "necesito un fontanero en Madrid", "quiero presupuestos de mudanza", or "busco profesor de portugués y su precio por hora".
 
+## Current Reply Evidence And Cost Meaning
+
+Before a reply or comparison, reconstruct the complete relevant inbound, Sent, Drafts, attachments and later provider events; a stale quote or an unsent clarification is not the current agreement. Bind each quote to exact scope, currency, tax basis, validity, exclusions and acceptance. Recover known original costs and later changes before calling a figure unknown. A supplier's quoted price is a procurement cost or market comparator, never customer revenue, earned profit or a committed sale.
+
+Use `$inbox-forensic-action-operator-skill` when this campaign feeds a broader inbox or opportunity ranking. For all/every reply reviews, enumerate and reconcile bounded message IDs, exhaust pages and hydrate bodies in provider-sized batches before filtering; report source accounts, timezone bounds, cutoff, counts and missing slices. Prefer native mailbox connectors or SMTP/IMAP. Keep optional outsourcing quotes as scenarios when the owner can deliver the work personally: own labour and technical work are zero cash cost unless binding staffing requirements force separate personnel. Deduct actual required external costs and distinguish fixed prices from estimates, contingent charges and noncash benefits.
+
+Verify current history before any authorized send and read back native Sent afterward. Reuse the existing authorized tracker rather than creating local recipient/log files; no duplicate sends, new scheduled loops or payments follow from a comparison request.
+
 ## Mode Resolver
 
 Classify the request before acting:
@@ -41,21 +49,21 @@ Before discovery, nail down with the user (or from context, if unattended) — d
 
 - **Default FROM: `samihalawaster@gmail.com`, sent via Gmail SMTP** (`smtp.gmail.com:587`, STARTTLS). A personal-looking Gmail address reads as an individual/small buyer, which gets more honest, less-inflated pricing and more complete detail than a branded company domain does.
 - **Never send this kind of campaign from `sami@samihalawa.com`** or any other address that reads as a branded/agency/big-company domain. Recipients who think they're quoting "a company" tend to either inflate the price or hold back real numbers, expecting a negotiation. This applies whether the campaign is for research or personal procurement.
-- Credentials: read `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` from environment/`.env` if present; otherwise ask the user once for the samihalawaster@gmail.com app password (never invent or reuse an unrelated stored credential silently — confirm which mailbox's app password is being used before the first send). Do the same for `IMAP_HOST`/`IMAP_PORT`/`IMAP_USER`/`IMAP_PASSWORD` for the reply-check phase (same mailbox, same credentials, IMAP port 993).
+- Credentials: read `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` from environment/`.env` if present; otherwise recover the exact account through the runtime-supported vault route and existing authorized configuration; never invent or reuse an unrelated credential. Do the same for `IMAP_HOST`/`IMAP_PORT`/`IMAP_USER`/`IMAP_PASSWORD` for the reply-check phase (same mailbox, same credentials, IMAP port 993).
 - Never print or log the password in any report shown to the user.
 
 ## Workflow
 
 1. **Define category** — resolve the What/Where/category-info-block above.
-2. **Discover targets** — web search / directories / maps listings for providers matching the category + location. Build a deduplicated list of individual recipient emails (not generic `info@` only if a named contact is findable — named contacts get read more often). Log the list to a plain file (`recipients.txt`) before sending, one address per line, so a resend or a "who did we already contact" check is trivial.
+2. **Discover targets** — web search / directories / maps listings for providers matching the category + location. Build a deduplicated list of individual recipient emails (not generic `info@` only if a named contact is findable — named contacts get read more often). Retain exact recipient identities in the existing authorized tracker or runtime ledger before sending so a later continuation cannot duplicate contact.
 3. **Draft the closed-price message** — Spanish by default for Spain-based targets (match the recipient's likely language; English if targeting non-Spanish markets). Structure:
    - Short opening stating what's being priced.
    - Explicit line that the requester evaluates by clarity and final price only, and is not doing sales calls as the primary channel (acknowledge in the closing that clarifying questions by email are fine — many good vendors will ask before quoting; that's expected, not a failure of the template).
    - The category-specific requirements block (bullet list of what's needed/expected).
    - The category-specific "information required in your reply" block (price/range, timeline or availability, what's included, relevant experience/credentials).
    - Sign-off as Sami Halawa, reachable at `samihalawaster@gmail.com`.
-4. **Send individually** — one SMTP send per recipient, in a loop, never BCC/CC multiple recipients on one message. Reuse the pattern: open one SMTP connection, reconnect on `SMTPServerDisconnected`/`SMTPSenderRefused`, small delay (2-4s) between sends to avoid throttling/spam flags, log `OK`/`FAIL` per recipient to a `send.log`, print a final `DONE ok=X fail=Y total=Z` line.
-5. **Track sends** — keep `recipients.txt` (who was targeted) and `send.log` (what actually went out) so a later "send to the rest" or "resend to non-repliers" never re-sends to someone already contacted, unless the user explicitly asks for a resend.
+4. **Send individually** — one SMTP send per recipient, in a loop, never BCC/CC multiple recipients on one message. Reuse the pattern: open one SMTP connection, reconnect on `SMTPServerDisconnected`/`SMTPSenderRefused`, small delay (2-4s) between sends to avoid throttling/spam flags, record `OK`/`FAIL` per recipient in the existing authorized tracker or runtime ledger, print a final `DONE ok=X fail=Y total=Z` line.
+5. **Track sends** — keep exact recipient identities and native send proof in the existing authorized tracker or runtime ledger so a later "send to the rest" or "resend to non-repliers" never re-sends to someone already contacted, unless the user explicitly asks for a resend.
 6. **Check replies** — on request (or after a reasonable wait, e.g. same day or next day), connect via IMAP to the sending mailbox, pull messages since the campaign's send date, and read full bodies (not just subjects) — subject lines alone are not enough to judge whether a real price was quoted.
 7. **Classify every genuine reply** into exactly one bucket:
    - **Closed price given** — extract the number(s)/range, currency, what's included, timeline.

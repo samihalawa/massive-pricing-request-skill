@@ -9,3 +9,8 @@ version: 1.0.0
 license: MIT
 author: samihalawa
 homepage: https://github.com/samihalawa/massive-pricing-request-skill
+
+interface:
+  display_name: "Closed Price Reply Comparison"
+  short_description: "Compare current scoped supplier quotes and actual external costs"
+  default_prompt: "Use $massive-pricing-request-skill for the authorized campaign. Reconcile complete current inbound, Sent, Drafts and provider history before follow-up; route broader qualified-opportunity ranking and cash-profit analysis to $inbox-forensic-action-operator-skill. Preserve scope and existing sends; do not create recurring automations."
